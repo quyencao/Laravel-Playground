@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Activation;
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -67,5 +70,24 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    public function register(Request $request) {
+        $this->validator($request->all())->validate();
+
+        $user = $this->create($request->all());
+
+        $token = str_random(64);
+
+        Activation::create([
+            'id_user' => $user->id,
+            'token' => $token
+        ]);
+
+        event(new Registered($user, $token));
+
+        return redirect()->to('login')
+            ->with('success',"We sent activation code. Please check your mail.");
+
     }
 }
