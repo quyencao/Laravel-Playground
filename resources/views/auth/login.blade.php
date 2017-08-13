@@ -10,6 +10,7 @@
                     @if(session('warning'))
                         <div class="alert alert-warning">
                             {{ session('warning') }}
+                            <a href="{{ route('resend') }}">Send new activation email</a>
                         </div>
                     @endif
                     @if(session('success'))

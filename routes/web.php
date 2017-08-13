@@ -20,3 +20,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('user/activation/{token}', 'Auth\LoginController@userActivation');
+
+Route::get('email/resend', 'Auth\LoginController@resendForm')->name('resend');
+
+Route::post('email/resend', 'Auth\LoginController@resend');

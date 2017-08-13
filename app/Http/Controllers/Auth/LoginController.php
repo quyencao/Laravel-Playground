@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Activation;
+use App\Events\Registered;
 use App\Http\Controllers\Controller;
+use App\Mail\ActivationEmail;
 use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
@@ -77,5 +79,39 @@ class LoginController extends Controller
 
         return $this->sendFailedLoginResponse($request);
 
+    }
+
+    public function resendForm() {
+        return view('email.resendEmail');
+    }
+
+    public function resend(Request $request) {
+        $this->validate($request, [
+           'email' => 'required|email'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if($user) {
+
+            $activation = Activation::where('id_user', $user->id)->first();
+
+            if($activation) {
+                event(new Registered($user, $activation->token));
+            } else {
+                $token = str_random(64);
+
+                Activation::create([
+                   'id_user' => $user->id,
+                   'token' => $token
+                ]);
+
+                event(new Registered($user, $token));
+            }
+
+            return redirect()->to('login')->with('success', 'New activation email has sent.');
+        }
+
+        return redirect()->back()->with('error', 'Email not exist.');
     }
 }
