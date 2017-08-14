@@ -18,3 +18,13 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/test', function () {
+   $comment = \App\Comment::find(4)->comments()->get();
+
+   return $comment;
+});
+
+Route::get('/comments', 'CommentController@index')->name('comment');
+
+Route::post('/add/comment', 'CommentController@add')->name('comment.add');
