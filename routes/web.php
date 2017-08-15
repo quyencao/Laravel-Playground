@@ -26,5 +26,6 @@ Route::get('/test', function () {
 });
 
 Route::get('/comments', 'CommentController@index')->name('comment');
+Route::get('/get/comments', 'CommentController@getComments');
 
 Route::post('/add/comment', 'CommentController@add')->name('comment.add');

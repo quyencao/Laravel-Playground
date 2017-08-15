@@ -11,7 +11,7 @@
             <div>
                 <a href="">Like</a>
                 <a @click.prevent="show = !show">Reply</a>
-                <comment-form v-if="show" :comment_id="comment_id"></comment-form>
+                <comment-form v-if="show" :comment_id="comment_id" :sendComment="sendComment"></comment-form>
             </div>
             <slot>
             </slot>
@@ -28,9 +28,15 @@
                 show: false
             }
         },
-        props: ['name', 'comment', 'comment_id'],
+        props: ['name', 'comment', 'comment_id', 'getComments'],
         mounted() {
             console.log('Component mounted.')
+        },
+        methods: {
+            sendComment(comment) {
+                this.show = false;
+                this.getComments();
+            }
         }
     }
 </script>

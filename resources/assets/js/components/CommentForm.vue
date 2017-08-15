@@ -12,7 +12,7 @@
 
 <script>
     export default {
-        props: ['comment_id'],
+        props: ['comment_id', 'sendComment'],
         data() {
            return {
                comment: ''
@@ -21,10 +21,19 @@
         methods: {
             addComment() {
                 if(this.comment !== '') {
-                    axios.post('/add/comment', { comment: this.comment, parent_id: this.comment_id })
-                        .then((res) => {
-                            console.log(res);
-                        })
+                    if(this.comment_id !== 0) {
+                        axios.post('/add/comment', {comment: this.comment, parent_id: this.comment_id})
+                            .then((res) => {
+                                this.sendComment(this.comment);
+                                this.comment = '';
+                            });
+                    } else {
+                        axios.post('/add/comment', {comment: this.comment, parent_id: 0})
+                            .then((res) => {
+                                this.comment = '';
+                                this.getComments();
+                            });
+                    }
                 }
             }
         }

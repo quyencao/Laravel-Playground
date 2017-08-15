@@ -8,15 +8,11 @@ use Illuminate\Http\Request;
 class CommentController extends Controller
 {
     public function index() {
-        $rootComments = $this->loadComment(0);
-
-//        return $rootComments;
-
-        return view('comments', compact('rootComments'));
+        return view('comments');
     }
 
     public function loadComment($id) {
-        $rootComments = Comment::where('parent_id', $id)->get();
+        $rootComments = Comment::where('parent_id', $id)->latest()->get();
 
         foreach ($rootComments as $comment) {
             $comment->comments = $this->loadComment($comment->id);
@@ -26,14 +22,19 @@ class CommentController extends Controller
     }
 
     public function add(Request $request) {
-        Comment::create([
+        $comment = Comment::create([
            'parent_id' => $request->parent_id,
            'comment' => $request->comment,
            'username' => 'Quyen'
         ]);
 
         return response()->json([
-            'status' => 'OK'
+            'status' => 'OK',
+            'comment' => $comment
         ]);
+    }
+
+    public function getComments() {
+        return response()->json($this->loadComment(0));
     }
 }
