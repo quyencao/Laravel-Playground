@@ -18,3 +18,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('article', 'ArticleController@index');
+Route::post('article', 'ArticleController@store')->name('article');
+Route::get('article/{article_id}/{tag}', 'ArticleController@untag')->name('article.untag');
+Route::get('article/{tag}', 'ArticleController@getArticleByTag')->name('tag.article');
